@@ -1,22 +1,33 @@
 #![feature(llvm_asm)]
-
 #![no_main]
 #![no_std]
 
-use core::panic::PanicInfo;
+extern crate panic_halt;
 
-#[panic_handler]
-fn panic(_panic: &PanicInfo<'_>) -> ! {
-    loop {}
-}
+extern crate avr_device;
 
-#[no_mangle]
-pub extern fn main() {
-}
+extern crate attiny85_hal as hal;
 
-/// A small busy loop.
-fn small_delay() {
-  for _ in 0..400000 {
-    unsafe { llvm_asm!("" :::: "volatile")}
-  }
+use hal::pac;
+
+use pac::Peripherals;
+use hal::prelude::*;
+
+#[cfg(feature = "rt")]
+use hal::entry;
+
+type Delay = hal::delay::Delay<hal::clock::MHz8>;
+
+#[entry]
+fn main() -> ! {
+    let mut delay = Delay::new();
+
+    let dp = Peripherals::take().unwrap();
+
+    let mut led = pac::PORTB::pb1::PB1.into_output(&mut dp.PORTB);
+
+    loop {
+        led.toggle.void_unwrap();
+        delay.delay_us(500u16);
+    }
 }
