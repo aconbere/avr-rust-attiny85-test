@@ -8,9 +8,6 @@ extern crate avr_device;
 
 extern crate attiny85_hal as hal;
 
-use hal::pac;
-
-use pac::Peripherals;
 use hal::prelude::*;
 
 #[cfg(feature = "rt")]
@@ -22,12 +19,12 @@ type Delay = hal::delay::Delay<hal::clock::MHz8>;
 fn main() -> ! {
     let mut delay = Delay::new();
 
-    let dp = Peripherals::take().unwrap();
-
-    let mut led = pac::PORTB::pb1::PB1.into_output(&mut dp.PORTB);
+    let dp = attiny85_hal::pac::Peripherals::take().unwrap();
+    let mut portb = dp.PORTB.split();
+    let mut pb1 = portb.pb1.into_output(&mut portb.ddr);
 
     loop {
-        led.toggle.void_unwrap();
+        pb1.toggle().void_unwrap();
         delay.delay_us(500u16);
     }
 }

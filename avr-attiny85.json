@@ -9,7 +9,8 @@
   "is-builtin": true,
   "late-link-args": {
     "gcc": [
-      "-lgcc"
+      "-lgcc",
+      "-lc"
     ]
   },
   "linker": "avr-gcc",

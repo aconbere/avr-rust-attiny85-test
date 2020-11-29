@@ -35,6 +35,7 @@ rev = "a22f954"
 panic = "abort"
 lto = true
 opt-level = "s"
+debug-assertions = false
 
 [profile.release]
 panic = "abort"
